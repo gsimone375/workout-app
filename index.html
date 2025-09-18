@@ -6,69 +6,73 @@
     <title>Piano di Allenamento</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <header class="header">
             <h1>Piano di Allenamento</h1>
-            <p class="subtitle">Frequenza: 3 giorni a settimana, multifrequenza (A-B-C-D)</p>
         </header>
 
-        <!-- Navigation Tabs -->
         <nav class="nav-tabs">
-            <button class="nav-tab active" data-day="A">Giorno A - Petto-Dorso-Bicipiti-Addome</button>
-            <button class="nav-tab" data-day="B">Giorno B - Gambe-Spalle-Trapezio inferiore-Tricipiti-Erettori spinali</button>
-            <button class="nav-tab" data-day="C">Giorno C - Dorso-Petto-Bicipiti-Addome</button>
-            <button class="nav-tab" data-day="D">Giorno D - Spalle-Tricipiti-Gambe</button>
+            <button class="nav-tab active" data-day="A">Giorno A</button>
+            <button class="nav-tab" data-day="B">Giorno B</button>
+            <button class="nav-tab" data-day="C">Giorno C</button>
+            <button class="nav-tab" data-day="D">Giorno D</button>
+            <button class="nav-tab" data-day="cronologia">Cronologia</button>
         </nav>
 
-        <!-- Day Content -->
-        <div class="day-content">
-            <div class="day-header">
-                <h2 id="day-title">Giorno A - Petto-Dorso-Bicipiti-Addome</h2>
-                <div class="date-section">
-                    <label for="workout-date" class="form-label">Data allenamento:</label>
-                    <input type="date" id="workout-date" class="form-control date-input">
+        <main class="main-content">
+            <div id="workout-section" class="workout-section">
+                <div class="workout-header">
+                    <h2 id="day-title">Giorno A - Petto-Dorso-Bicipiti-Addome</h2>
+                    <div class="form-group">
+                        <label for="workout-date" class="form-label">Data Allenamento:</label>
+                        <input type="date" id="workout-date" class="form-control">
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="workout-table">
+                        <thead>
+                            <tr>
+                                <th>Esercizio</th>
+                                <th>Serie/Reps</th>
+                                <th>Peso partenza</th>
+                                <th>Peso usato</th>
+                                <th>Serie effettive</th>
+                                <th>Note esercizio</th>
+                                <th>Recupero(s)</th>
+                                <th>Note personali</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exercise-table-body">
+                            <!-- Gli esercizi verranno inseriti dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="save-day" class="btn btn--primary">Salva Giorno</button>
+                    <button id="print-day" class="btn btn--secondary">Stampa Giorno</button>
+                    <button id="export-pdf" class="btn btn--secondary">Esporta PDF</button>
+                    <button id="export-excel" class="btn btn--secondary">Esporta Excel</button>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button class="btn btn--primary" id="save-day">💾 Salva Giorno</button>
-                <button class="btn btn--outline" id="print-day">🖨️ Stampa Giorno</button>
-                <button class="btn btn--secondary" id="export-pdf">📄 Esporta PDF</button>
+            <div id="history-section" class="history-section hidden">
+                <div class="history-header">
+                    <h2>Cronologia Allenamenti</h2>
+                    <button id="export-history-excel" class="btn btn--primary">Esporta Cronologia Excel</button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- La cronologia verrà inserita dinamicamente -->
+                </div>
             </div>
+        </main>
 
-            <!-- Exercise Table -->
-            <div class="table-container">
-                <table class="exercise-table" id="exercise-table">
-                    <thead>
-                        <tr>
-                            <th>Esercizio</th>
-                            <th>Serie/Reps</th>
-                            <th>Peso partenza</th>
-                            <th>Note esercizio</th>
-                            <th>Recupero(s)</th>
-                            <th>Note personali</th>
-                        </tr>
-                    </thead>
-                    <tbody id="exercise-tbody">
-                        <!-- Exercises will be populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- General Notes -->
-        <div class="general-notes">
-            <h3>Note Generali</h3>
-            <ul>
-                <li>Segnati tutti i carichi che utilizzi volta per volta, tieni un diario dove ti segni tutto.</li>
-                <li>Prima di iniziare è consigliabile un riscaldamento di 5-10 minuti con attività aerobica a scelta (tapis roulant, salto con corda, ellittica, cicloergometro, jumping jack, vogatore).</li>
-                <li>Range di ripetizioni: parti con il numero minimo del range, mantieni lo stesso peso aumentando le ripetizioni fino al massimo del range, poi aumenta il peso e ricomincia dal minimo.</li>
-                <li>Sono presenti 4 giorni di allenamento (A-B-C-D) nonostante tu vada 3 volte a settimana per una multifrequenza spalmata su 9 giorni.</li>
-            </ul>
+        <div id="success-message" class="message success-message hidden">
+            <p>Allenamento salvato con successo!</p>
         </div>
     </div>
 
