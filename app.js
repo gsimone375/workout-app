@@ -239,7 +239,7 @@ const Storage = {
     this.history = data;
     
     // Pronto per GitHub Pages - decommentare la riga sotto:
-    // localStorage.setItem('workout_history', JSON.stringify(data));
+    localStorage.setItem('workout_history', JSON.stringify(data));
   },
   
   loadHistory: function() {
