@@ -247,8 +247,8 @@ const Storage = {
     return this.history;
     
     // Pronto per GitHub Pages - decommentare le righe sotto:
-    // const stored = localStorage.getItem('workout_history');
-    // return stored ? JSON.parse(stored) : [];
+    const stored = localStorage.getItem('workout_history');
+    return stored ? JSON.parse(stored) : [];
   }
 };
 
