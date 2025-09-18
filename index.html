@@ -10,70 +10,206 @@
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <header class="header">
             <h1>Piano di Allenamento</h1>
+            <div class="backup-controls">
+                <button class="btn btn--sm btn--outline" id="exportBackup">Esporta Backup</button>
+                <button class="btn btn--sm btn--outline" id="importBackup">Importa Backup</button>
+                <input type="file" id="backupFile" accept=".json" style="display: none;">
+            </div>
         </header>
 
-        <nav class="nav-tabs">
-            <button class="nav-tab active" data-day="A">Giorno A</button>
-            <button class="nav-tab" data-day="B">Giorno B</button>
-            <button class="nav-tab" data-day="C">Giorno C</button>
-            <button class="nav-tab" data-day="D">Giorno D</button>
-            <button class="nav-tab" data-day="cronologia">Cronologia</button>
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="A">A</button>
+            <button class="tab-btn" data-tab="B">B</button>
+            <button class="tab-btn" data-tab="C">C</button>
+            <button class="tab-btn" data-tab="D">D</button>
+            <button class="tab-btn" data-tab="cronologia">Cronologia</button>
         </nav>
 
-        <main class="main-content">
-            <div id="workout-section" class="workout-section">
-                <div class="workout-header">
-                    <h2 id="day-title">Giorno A - Petto-Dorso-Bicipiti-Addome</h2>
+        <!-- Training Days Content -->
+        <div class="tab-content active" id="tab-A">
+            <div class="workout-header">
+                <h2>Giorno A - Petto-Dorso-Bicipiti-Addome</h2>
+                <div class="workout-controls">
                     <div class="form-group">
-                        <label for="workout-date" class="form-label">Data Allenamento:</label>
-                        <input type="date" id="workout-date" class="form-control">
+                        <label for="dateA" class="form-label">Data Allenamento:</label>
+                        <input type="date" id="dateA" class="form-control">
                     </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="workout-table">
-                        <thead>
-                            <tr>
-                                <th>Esercizio</th>
-                                <th>Serie/Reps</th>
-                                <th>Peso partenza</th>
-                                <th>Peso usato</th>
-                                <th>Serie effettive</th>
-                                <th>Note esercizio</th>
-                                <th>Recupero(s)</th>
-                                <th>Note personali</th>
-                            </tr>
-                        </thead>
-                        <tbody id="exercise-table-body">
-                            <!-- Gli esercizi verranno inseriti dinamicamente -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="action-buttons">
-                    <button id="save-day" class="btn btn--primary">Salva Giorno</button>
-                    <button id="print-day" class="btn btn--secondary">Stampa Giorno</button>
-                    <button id="export-pdf" class="btn btn--secondary">Esporta PDF</button>
-                    <button id="export-excel" class="btn btn--secondary">Esporta Excel</button>
+                    <button class="btn btn--primary" id="saveA">Salva Giorno</button>
+                    <button class="btn btn--outline" id="exportPdfA">Export PDF</button>
+                    <button class="btn btn--outline" id="exportExcelA">Export Excel</button>
                 </div>
             </div>
-
-            <div id="history-section" class="history-section hidden">
-                <div class="history-header">
-                    <h2>Cronologia Allenamenti</h2>
-                    <button id="export-history-excel" class="btn btn--primary">Esporta Cronologia Excel</button>
-                </div>
-                <div id="history-list" class="history-list">
-                    <!-- La cronologia verrà inserita dinamicamente -->
-                </div>
+            <div class="table-container">
+                <table class="workout-table" id="tableA">
+                    <thead>
+                        <tr>
+                            <th>Esercizio</th>
+                            <th>Serie/Reps</th>
+                            <th>Peso Partenza</th>
+                            <th>Peso Usato</th>
+                            <th>Serie Effettive</th>
+                            <th>Note Esercizio</th>
+                            <th>Recupero (s)</th>
+                            <th>Note Personali</th>
+                        </tr>
+                    </thead>
+                    <tbody id="exercisesA">
+                        <!-- Exercises will be populated by JS -->
+                    </tbody>
+                </table>
             </div>
-        </main>
-
-        <div id="success-message" class="message success-message hidden">
-            <p>Allenamento salvato con successo!</p>
         </div>
+
+        <div class="tab-content" id="tab-B">
+            <div class="workout-header">
+                <h2>Giorno B - Gambe-Spalle-Trapezio inferiore-Tricipiti-Erettori spinali</h2>
+                <div class="workout-controls">
+                    <div class="form-group">
+                        <label for="dateB" class="form-label">Data Allenamento:</label>
+                        <input type="date" id="dateB" class="form-control">
+                    </div>
+                    <button class="btn btn--primary" id="saveB">Salva Giorno</button>
+                    <button class="btn btn--outline" id="exportPdfB">Export PDF</button>
+                    <button class="btn btn--outline" id="exportExcelB">Export Excel</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="workout-table" id="tableB">
+                    <thead>
+                        <tr>
+                            <th>Esercizio</th>
+                            <th>Serie/Reps</th>
+                            <th>Peso Partenza</th>
+                            <th>Peso Usato</th>
+                            <th>Serie Effettive</th>
+                            <th>Note Esercizio</th>
+                            <th>Recupero (s)</th>
+                            <th>Note Personali</th>
+                        </tr>
+                    </thead>
+                    <tbody id="exercisesB">
+                        <!-- Exercises will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-C">
+            <div class="workout-header">
+                <h2>Giorno C - Dorso-Petto-Bicipiti-Addome</h2>
+                <div class="workout-controls">
+                    <div class="form-group">
+                        <label for="dateC" class="form-label">Data Allenamento:</label>
+                        <input type="date" id="dateC" class="form-control">
+                    </div>
+                    <button class="btn btn--primary" id="saveC">Salva Giorno</button>
+                    <button class="btn btn--outline" id="exportPdfC">Export PDF</button>
+                    <button class="btn btn--outline" id="exportExcelC">Export Excel</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="workout-table" id="tableC">
+                    <thead>
+                        <tr>
+                            <th>Esercizio</th>
+                            <th>Serie/Reps</th>
+                            <th>Peso Partenza</th>
+                            <th>Peso Usato</th>
+                            <th>Serie Effettive</th>
+                            <th>Note Esercizio</th>
+                            <th>Recupero (s)</th>
+                            <th>Note Personali</th>
+                        </tr>
+                    </thead>
+                    <tbody id="exercisesC">
+                        <!-- Exercises will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-D">
+            <div class="workout-header">
+                <h2>Giorno D - Spalle-Tricipiti-Gambe</h2>
+                <div class="workout-controls">
+                    <div class="form-group">
+                        <label for="dateD" class="form-label">Data Allenamento:</label>
+                        <input type="date" id="dateD" class="form-control">
+                    </div>
+                    <button class="btn btn--primary" id="saveD">Salva Giorno</button>
+                    <button class="btn btn--outline" id="exportPdfD">Export PDF</button>
+                    <button class="btn btn--outline" id="exportExcelD">Export Excel</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="workout-table" id="tableD">
+                    <thead>
+                        <tr>
+                            <th>Esercizio</th>
+                            <th>Serie/Reps</th>
+                            <th>Peso Partenza</th>
+                            <th>Peso Usato</th>
+                            <th>Serie Effettive</th>
+                            <th>Note Esercizio</th>
+                            <th>Recupero (s)</th>
+                            <th>Note Personali</th>
+                        </tr>
+                    </thead>
+                    <tbody id="exercisesD">
+                        <!-- Exercises will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Cronologia Tab -->
+        <div class="tab-content" id="tab-cronologia">
+            <div class="cronologia-header">
+                <h2>Cronologia Allenamenti</h2>
+                <div class="cronologia-controls">
+                    <input type="text" id="searchHistory" placeholder="Cerca per data o giorno..." class="form-control search-input">
+                    <button class="btn btn--primary" id="exportHistoryExcel">Export Cronologia Excel</button>
+                    <button class="btn btn--outline" id="clearHistory">Reset Cronologia</button>
+                </div>
+            </div>
+            
+            <div class="history-list" id="historyList">
+                <!-- History items will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per conferma eliminazione -->
+    <div class="modal hidden" id="deleteModal">
+        <div class="modal-content">
+            <h3>Conferma Eliminazione</h3>
+            <p>Sei sicuro di voler eliminare questo allenamento? Questa azione non può essere annullata.</p>
+            <div class="modal-actions">
+                <button class="btn btn--outline" id="cancelDelete">Annulla</button>
+                <button class="btn btn--primary" id="confirmDelete">Elimina</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per reset cronologia -->
+    <div class="modal hidden" id="resetModal">
+        <div class="modal-content">
+            <h3>Reset Cronologia</h3>
+            <p>Sei sicuro di voler eliminare tutta la cronologia? Questa azione non può essere annullata.</p>
+            <div class="modal-actions">
+                <button class="btn btn--outline" id="cancelReset">Annulla</button>
+                <button class="btn btn--primary" id="confirmReset">Reset Completo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avviso limitazioni sandbox -->
+    <div class="sandbox-notice">
+        <p><strong>⚠️ Nota:</strong> I dati sono salvati solo per questa sessione. In un ambiente di produzione verrebbero salvati permanentemente nel browser.</p>
     </div>
 
     <script src="app.js"></script>

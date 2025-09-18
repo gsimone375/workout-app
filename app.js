@@ -1,4 +1,4 @@
-// Dati del piano di allenamento
+// Workout data structure
 const workoutData = {
   "A": {
     "nome": "Petto-Dorso-Bicipiti-Addome",
@@ -225,472 +225,500 @@ const workoutData = {
   }
 };
 
-// Variabili globali
-let currentDay = 'A';
+// Global state
 let workoutHistory = [];
+let currentEditingWorkout = null;
 
-// Inizializzazione dell'app
+// Simulated localStorage for sandbox environment
+const simulatedStorage = {
+  setItem: function(key, value) {
+    // In a real environment, this would be: localStorage.setItem(key, value);
+    console.log(`Saving to localStorage: ${key}`, value);
+  },
+  getItem: function(key) {
+    // In a real environment, this would be: return localStorage.getItem(key);
+    console.log(`Loading from localStorage: ${key}`);
+    return null; // Simulate empty storage
+  },
+  removeItem: function(key) {
+    // In a real environment, this would be: localStorage.removeItem(key);
+    console.log(`Removing from localStorage: ${key}`);
+  }
+};
+
+// Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Inizializzazione app...');
-  
-  // Aspetta un po' per essere sicuri che il DOM sia completamente caricato
-  setTimeout(() => {
-    initializeApp();
-  }, 100);
+  initializeTabs();
+  initializeWorkoutTables();
+  initializeEventListeners();
+  loadWorkoutHistory();
+  setTodayDate();
 });
 
-function initializeApp() {
-  console.log('App inizializzata');
-  setDefaultDate();
-  setupNavigationTabs();
-  setupActionButtons();
-  
-  // Carica il giorno iniziale
-  showWorkoutSection();
-  loadWorkoutDay(currentDay);
-}
+// Tab functionality
+function initializeTabs() {
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
 
-function setupNavigationTabs() {
-  const navTabs = document.querySelectorAll('.nav-tab');
-  console.log('Setup navigation tabs, trovati:', navTabs.length);
-  
-  navTabs.forEach((tab, index) => {
-    console.log(`Tab ${index}:`, tab.getAttribute('data-day'));
-    
-    // Rimuovi event listener esistenti
-    tab.replaceWith(tab.cloneNode(true));
-  });
-  
-  // Riassegna gli event listener ai nuovi elementi
-  const newNavTabs = document.querySelectorAll('.nav-tab');
-  newNavTabs.forEach(tab => {
-    tab.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetTab = button.getAttribute('data-tab');
       
-      const day = this.getAttribute('data-day');
-      console.log('Clicked tab:', day);
+      // Remove active class from all tabs and contents
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
       
-      // Rimuovi active da tutti i tab
-      newNavTabs.forEach(t => t.classList.remove('active'));
-      
-      // Aggiungi active al tab corrente
-      this.classList.add('active');
-      
-      if (day === 'cronologia') {
-        console.log('Showing history section');
-        showHistorySection();
-      } else {
-        console.log('Showing workout section for day:', day);
-        currentDay = day;
-        showWorkoutSection();
-        
-        // Forza il caricamento del giorno dopo un breve delay
-        setTimeout(() => {
-          loadWorkoutDay(day);
-        }, 50);
-      }
+      // Add active class to clicked tab and corresponding content
+      button.classList.add('active');
+      document.getElementById(`tab-${targetTab}`).classList.add('active');
     });
   });
 }
 
-function setupActionButtons() {
-  const saveBtn = document.getElementById('save-day');
-  const printBtn = document.getElementById('print-day');
-  const pdfBtn = document.getElementById('export-pdf');
-  const excelBtn = document.getElementById('export-excel');
-  const historyExcelBtn = document.getElementById('export-history-excel');
-  
-  if (saveBtn) saveBtn.addEventListener('click', saveWorkoutDay);
-  if (printBtn) printBtn.addEventListener('click', printWorkoutDay);
-  if (pdfBtn) pdfBtn.addEventListener('click', exportToPDF);
-  if (excelBtn) excelBtn.addEventListener('click', exportToExcel);
-  if (historyExcelBtn) historyExcelBtn.addEventListener('click', exportHistoryToExcel);
+// Initialize workout tables
+function initializeWorkoutTables() {
+  Object.keys(workoutData).forEach(day => {
+    createWorkoutTable(day, workoutData[day]);
+  });
 }
 
-function setDefaultDate() {
-  const today = new Date().toISOString().split('T')[0];
-  const dateInput = document.getElementById('workout-date');
-  if (dateInput) {
-    dateInput.value = today;
-    console.log('Data impostata:', today);
-  }
-}
+// Create workout table for a specific day
+function createWorkoutTable(day, dayData) {
+  const tbody = document.getElementById(`exercises${day}`);
+  tbody.innerHTML = '';
 
-function showWorkoutSection() {
-  const workoutSection = document.getElementById('workout-section');
-  const historySection = document.getElementById('history-section');
-  
-  console.log('Showing workout section');
-  
-  if (workoutSection) {
-    workoutSection.style.display = 'block';
-    workoutSection.classList.remove('hidden');
-  }
-  if (historySection) {
-    historySection.style.display = 'none';
-    historySection.classList.add('hidden');
-  }
-}
-
-function showHistorySection() {
-  const workoutSection = document.getElementById('workout-section');
-  const historySection = document.getElementById('history-section');
-  
-  console.log('Showing history section');
-  
-  if (workoutSection) {
-    workoutSection.style.display = 'none';
-    workoutSection.classList.add('hidden');
-  }
-  if (historySection) {
-    historySection.style.display = 'block';
-    historySection.classList.remove('hidden');
-  }
-  
-  loadHistory();
-}
-
-function loadWorkoutDay(day) {
-  console.log('Loading workout day:', day);
-  
-  const dayData = workoutData[day];
-  if (!dayData) {
-    console.error('Nessun dato trovato per il giorno:', day);
-    return;
-  }
-  
-  const dayTitle = document.getElementById('day-title');
-  const tableBody = document.getElementById('exercise-table-body');
-  
-  if (!dayTitle || !tableBody) {
-    console.error('Elementi DOM non trovati', { dayTitle: !!dayTitle, tableBody: !!tableBody });
-    return;
-  }
-  
-  // Aggiorna il titolo
-  const newTitle = `Giorno ${day} - ${dayData.nome}`;
-  console.log('Updating title to:', newTitle);
-  dayTitle.textContent = newTitle;
-  
-  // Pulisci e ricostruisci la tabella
-  tableBody.innerHTML = '';
-  console.log('Cleared table, adding', dayData.esercizi.length, 'exercises');
-  
   dayData.esercizi.forEach((exercise, index) => {
     const row = document.createElement('tr');
     row.innerHTML = `
       <td class="exercise-name">${exercise.nome}</td>
       <td>${exercise.serie_reps}</td>
       <td>${exercise.peso_partenza}</td>
-      <td><input type="text" class="peso-usato" data-exercise="${index}" placeholder="Peso usato"></td>
-      <td><input type="number" class="serie-effettive" data-exercise="${index}" placeholder="Serie" min="0"></td>
-      <td>${exercise.note_esercizio}</td>
+      <td><input type="text" class="exercise-input" data-field="peso_usato" data-day="${day}" data-index="${index}"></td>
+      <td><input type="text" class="exercise-input" data-field="serie_effettive" data-day="${day}" data-index="${index}"></td>
+      <td class="note-cell">
+        <div class="note-text">${exercise.note_esercizio}</div>
+      </td>
       <td>${exercise.recupero}</td>
-      <td><textarea class="note-personali" data-exercise="${index}" placeholder="Note personali..." rows="2"></textarea></td>
+      <td class="note-cell">
+        <textarea class="exercise-input exercise-textarea" data-field="note_personali" data-day="${day}" data-index="${index}" placeholder="Note personali..."></textarea>
+      </td>
     `;
-    tableBody.appendChild(row);
+    tbody.appendChild(row);
   });
-  
-  console.log('Workout day loaded successfully for day:', day);
 }
 
-function saveWorkoutDay() {
-  const dateInput = document.getElementById('workout-date');
-  const date = dateInput ? dateInput.value : '';
-  
+// Event listeners
+function initializeEventListeners() {
+  // Save buttons
+  ['A', 'B', 'C', 'D'].forEach(day => {
+    document.getElementById(`save${day}`).addEventListener('click', () => saveWorkout(day));
+    document.getElementById(`exportPdf${day}`).addEventListener('click', () => exportToPDF(day));
+    document.getElementById(`exportExcel${day}`).addEventListener('click', () => exportToExcel(day));
+  });
+
+  // History search
+  document.getElementById('searchHistory').addEventListener('input', filterHistory);
+
+  // History controls
+  document.getElementById('exportHistoryExcel').addEventListener('click', exportHistoryToExcel);
+  document.getElementById('clearHistory').addEventListener('click', showResetModal);
+
+  // Backup controls
+  document.getElementById('exportBackup').addEventListener('click', exportBackup);
+  document.getElementById('importBackup').addEventListener('click', () => {
+    document.getElementById('backupFile').click();
+  });
+  document.getElementById('backupFile').addEventListener('change', importBackup);
+
+  // Modal controls
+  document.getElementById('cancelDelete').addEventListener('click', hideDeleteModal);
+  document.getElementById('confirmDelete').addEventListener('click', confirmDeleteWorkout);
+  document.getElementById('cancelReset').addEventListener('click', hideResetModal);
+  document.getElementById('confirmReset').addEventListener('click', confirmResetHistory);
+}
+
+// Set today's date in all date inputs
+function setTodayDate() {
+  const today = new Date().toISOString().split('T')[0];
+  ['A', 'B', 'C', 'D'].forEach(day => {
+    document.getElementById(`date${day}`).value = today;
+  });
+}
+
+// Save workout
+function saveWorkout(day) {
+  const date = document.getElementById(`date${day}`).value;
   if (!date) {
-    alert('Inserisci la data dell\'allenamento');
+    showMessage('Seleziona una data per l\'allenamento.', 'error');
     return;
   }
-  
-  const dayData = workoutData[currentDay];
-  if (!dayData) {
-    alert('Errore nel caricamento dei dati del giorno');
-    return;
-  }
-  
+
   const workoutSession = {
+    id: currentEditingWorkout ? currentEditingWorkout.id : Date.now(),
+    day: day,
     date: date,
-    day: currentDay,
-    dayName: dayData.nome,
-    exercises: [],
-    timestamp: new Date().toISOString()
+    dayName: workoutData[day].nome,
+    exercises: []
   };
-  
-  const exercises = dayData.esercizi;
-  const pesoUsatoInputs = document.querySelectorAll('.peso-usato');
-  const serieEffettiveInputs = document.querySelectorAll('.serie-effettive');
-  const notePersonaliInputs = document.querySelectorAll('.note-personali');
-  
-  exercises.forEach((exercise, index) => {
-    const pesoUsato = pesoUsatoInputs[index] ? pesoUsatoInputs[index].value.trim() : '';
-    const serieEffettive = serieEffettiveInputs[index] ? serieEffettiveInputs[index].value.trim() : '';
-    const notePersonali = notePersonaliInputs[index] ? notePersonaliInputs[index].value.trim() : '';
-    
-    workoutSession.exercises.push({
-      nome: exercise.nome,
-      serie_reps: exercise.serie_reps,
-      peso_partenza: exercise.peso_partenza,
-      peso_usato: pesoUsato,
-      serie_effettive: serieEffettive,
-      note_esercizio: exercise.note_esercizio,
-      recupero: exercise.recupero,
-      note_personali: notePersonali
-    });
-  });
-  
-  workoutHistory.push(workoutSession);
-  console.log('Allenamento salvato:', workoutSession);
-  console.log('Totale allenamenti in cronologia:', workoutHistory.length);
-  showSuccessMessage('Allenamento salvato con successo!');
-}
 
-function showSuccessMessage(message) {
-  const messageElement = document.getElementById('success-message');
-  if (messageElement) {
-    const p = messageElement.querySelector('p');
-    if (p) {
-      p.textContent = message;
+  // Collect exercise data
+  const inputs = document.querySelectorAll(`[data-day="${day}"]`);
+  const exerciseData = {};
+
+  inputs.forEach(input => {
+    const index = input.getAttribute('data-index');
+    const field = input.getAttribute('data-field');
+    
+    if (!exerciseData[index]) {
+      exerciseData[index] = {
+        nome: workoutData[day].esercizi[index].nome,
+        serie_reps: workoutData[day].esercizi[index].serie_reps,
+        peso_partenza: workoutData[day].esercizi[index].peso_partenza,
+        note_esercizio: workoutData[day].esercizi[index].note_esercizio,
+        recupero: workoutData[day].esercizi[index].recupero
+      };
     }
-    messageElement.classList.remove('hidden');
     
-    setTimeout(() => {
-      messageElement.classList.add('hidden');
-    }, 3000);
+    exerciseData[index][field] = input.value;
+  });
+
+  workoutSession.exercises = Object.values(exerciseData);
+
+  // Save to history
+  if (currentEditingWorkout) {
+    const index = workoutHistory.findIndex(w => w.id === currentEditingWorkout.id);
+    workoutHistory[index] = workoutSession;
+    showMessage('Allenamento modificato con successo!', 'success');
+    currentEditingWorkout = null;
+  } else {
+    workoutHistory.unshift(workoutSession);
+    showMessage('Allenamento salvato con successo!', 'success');
   }
+
+  saveWorkoutHistory();
+  updateHistoryDisplay();
+  clearWorkoutForm(day);
 }
 
-function loadHistory() {
-  const historyList = document.getElementById('history-list');
+// Load workout for editing
+function loadWorkoutForEditing(workoutId) {
+  const workout = workoutHistory.find(w => w.id === workoutId);
+  if (!workout) return;
+
+  currentEditingWorkout = workout;
   
-  if (!historyList) {
-    console.error('Elemento history-list non trovato');
-    return;
+  // Switch to the workout day tab
+  document.querySelector(`[data-tab="${workout.day}"]`).click();
+  
+  // Fill the date
+  document.getElementById(`date${workout.day}`).value = workout.date;
+  
+  // Fill exercise data
+  workout.exercises.forEach((exercise, index) => {
+    const pesoInput = document.querySelector(`[data-day="${workout.day}"][data-index="${index}"][data-field="peso_usato"]`);
+    const serieInput = document.querySelector(`[data-day="${workout.day}"][data-index="${index}"][data-field="serie_effettive"]`);
+    const noteInput = document.querySelector(`[data-day="${workout.day}"][data-index="${index}"][data-field="note_personali"]`);
+    
+    if (pesoInput) pesoInput.value = exercise.peso_usato || '';
+    if (serieInput) serieInput.value = exercise.serie_effettive || '';
+    if (noteInput) noteInput.value = exercise.note_personali || '';
+  });
+
+  showMessage('Allenamento caricato per la modifica.', 'success');
+}
+
+// Clear workout form
+function clearWorkoutForm(day) {
+  const inputs = document.querySelectorAll(`[data-day="${day}"]`);
+  inputs.forEach(input => {
+    input.value = '';
+  });
+  setTodayDate();
+}
+
+// Delete workout
+let workoutToDelete = null;
+
+function showDeleteModal(workoutId) {
+  workoutToDelete = workoutId;
+  document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function hideDeleteModal() {
+  workoutToDelete = null;
+  document.getElementById('deleteModal').classList.add('hidden');
+}
+
+function confirmDeleteWorkout() {
+  if (workoutToDelete) {
+    workoutHistory = workoutHistory.filter(w => w.id !== workoutToDelete);
+    saveWorkoutHistory();
+    updateHistoryDisplay();
+    showMessage('Allenamento eliminato con successo.', 'success');
   }
-  
-  console.log('Loading history, found', workoutHistory.length, 'workouts');
+  hideDeleteModal();
+}
+
+// Reset history
+function showResetModal() {
+  document.getElementById('resetModal').classList.remove('hidden');
+}
+
+function hideResetModal() {
+  document.getElementById('resetModal').classList.add('hidden');
+}
+
+function confirmResetHistory() {
+  workoutHistory = [];
+  saveWorkoutHistory();
+  updateHistoryDisplay();
+  showMessage('Cronologia resettata completamente.', 'success');
+  hideResetModal();
+}
+
+// History management
+function loadWorkoutHistory() {
+  const saved = simulatedStorage.getItem('workoutHistory');
+  if (saved) {
+    try {
+      workoutHistory = JSON.parse(saved);
+    } catch (e) {
+      console.error('Error loading workout history:', e);
+      workoutHistory = [];
+    }
+  }
+  updateHistoryDisplay();
+}
+
+function saveWorkoutHistory() {
+  simulatedStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
+}
+
+function updateHistoryDisplay() {
+  const historyList = document.getElementById('historyList');
   
   if (workoutHistory.length === 0) {
-    historyList.innerHTML = '<div class="card"><div class="card__body"><p>Nessun allenamento salvato ancora. Vai ai giorni di allenamento e salva un workout per vederlo qui!</p></div></div>';
-    return;
-  }
-  
-  historyList.innerHTML = '';
-  
-  // Ordina per data decrescente
-  const sortedHistory = [...workoutHistory].sort((a, b) => new Date(b.date) - new Date(a.date));
-  
-  sortedHistory.forEach((session, sessionIndex) => {
-    console.log(`Rendering session ${sessionIndex}:`, session);
-    
-    const historyItem = document.createElement('div');
-    historyItem.className = 'history-item';
-    
-    const exercisesList = session.exercises.map(exercise => {
-      const data = [];
-      if (exercise.peso_usato) data.push(`Peso: ${exercise.peso_usato}`);
-      if (exercise.serie_effettive) data.push(`Serie: ${exercise.serie_effettive}`);
-      if (exercise.note_personali) data.push(`Note: ${exercise.note_personali}`);
-      
-      return `
-        <div class="history-exercise">
-          <div class="history-exercise-name">${exercise.nome}</div>
-          <div class="history-exercise-data">${exercise.serie_reps}</div>
-          <div class="history-exercise-data">${exercise.peso_partenza}</div>
-          <div class="history-exercise-data">${data.length > 0 ? data.join(' | ') : 'Nessun dato inserito'}</div>
-        </div>
-      `;
-    }).join('');
-    
-    historyItem.innerHTML = `
-      <div class="history-item-header">
-        <div class="history-item-date">${formatDate(session.date)}</div>
-        <div class="history-item-day">Giorno ${session.day} - ${session.dayName}</div>
-      </div>
-      <div class="history-item-exercises">
-        ${exercisesList}
+    historyList.innerHTML = `
+      <div class="empty-state">
+        <h3>Nessun allenamento salvato</h3>
+        <p>Inizia a tracciare i tuoi allenamenti selezionando un giorno e salvando i tuoi progressi.</p>
       </div>
     `;
-    
-    historyList.appendChild(historyItem);
+    return;
+  }
+
+  historyList.innerHTML = workoutHistory.map(workout => `
+    <div class="history-item">
+      <div class="history-header">
+        <div class="history-info">
+          <h3>Giorno ${workout.day} - ${formatDate(workout.date)}</h3>
+          <p class="history-meta">${workout.dayName}</p>
+        </div>
+        <div class="history-actions">
+          <button class="btn btn--sm btn--outline" onclick="loadWorkoutForEditing(${workout.id})">Modifica</button>
+          <button class="btn btn--sm btn--outline" onclick="showDeleteModal(${workout.id})">Elimina</button>
+        </div>
+      </div>
+      <div class="history-preview">
+        ${workout.exercises.filter(ex => ex.peso_usato || ex.serie_effettive || ex.note_personali).slice(0, 4).map(exercise => `
+          <div class="exercise-preview">
+            <strong>${exercise.nome}</strong>
+            <div class="exercise-data">
+              ${exercise.peso_usato ? `Peso: ${exercise.peso_usato}` : ''}
+              ${exercise.serie_effettive ? ` | Serie: ${exercise.serie_effettive}` : ''}
+              ${exercise.note_personali ? ` | Note: ${exercise.note_personali}` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Filter history
+function filterHistory() {
+  const searchTerm = document.getElementById('searchHistory').value.toLowerCase();
+  const historyItems = document.querySelectorAll('.history-item');
+  
+  historyItems.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    if (text.includes(searchTerm)) {
+      item.style.display = 'block';
+    } else {
+      item.style.display = 'none';
+    }
   });
 }
 
-function formatDate(dateString) {
-  try {
-    const date = new Date(dateString + 'T00:00:00');
-    return date.toLocaleDateString('it-IT', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-  } catch (error) {
-    console.error('Errore nel formato data:', error);
-    return dateString;
-  }
-}
-
-function printWorkoutDay() {
-  window.print();
-}
-
-function exportToPDF() {
-  if (!window.jspdf) {
-    alert('Libreria PDF non disponibile');
-    return;
-  }
+// Export functions
+function exportToPDF(day) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const date = document.getElementById(`date${day}`).value;
   
-  try {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-    const dateInput = document.getElementById('workout-date');
-    const date = dateInput ? dateInput.value : '';
-    const dayData = workoutData[currentDay];
-    
-    if (!dayData) {
-      alert('Errore nel caricamento dei dati');
-      return;
+  doc.setFontSize(18);
+  doc.text(`Allenamento Giorno ${day}`, 20, 20);
+  doc.setFontSize(12);
+  doc.text(`Data: ${formatDate(date)}`, 20, 30);
+  doc.text(`${workoutData[day].nome}`, 20, 40);
+  
+  let yPosition = 60;
+  const exercises = collectWorkoutData(day);
+  
+  exercises.forEach(exercise => {
+    if (yPosition > 250) {
+      doc.addPage();
+      yPosition = 20;
     }
     
-    pdf.setFontSize(20);
-    pdf.text(`Giorno ${currentDay} - ${dayData.nome}`, 20, 30);
-    pdf.setFontSize(12);
-    pdf.text(`Data: ${formatDate(date)}`, 20, 45);
-    
-    let yPosition = 60;
-    
-    dayData.esercizi.forEach((exercise) => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        yPosition = 30;
-      }
-      
-      pdf.setFontSize(12);
-      pdf.text(exercise.nome, 20, yPosition);
-      yPosition += 7;
-      
-      pdf.setFontSize(10);
-      pdf.text(`Serie/Reps: ${exercise.serie_reps} | Peso partenza: ${exercise.peso_partenza}`, 20, yPosition);
-      yPosition += 7;
-      
-      if (exercise.recupero) {
-        pdf.text(`Recupero: ${exercise.recupero}s`, 20, yPosition);
-        yPosition += 7;
-      }
-      
-      if (exercise.note_esercizio) {
-        const lines = pdf.splitTextToSize(exercise.note_esercizio, 170);
-        pdf.text(lines, 20, yPosition);
-        yPosition += lines.length * 5;
-      }
-      
+    doc.text(`${exercise.nome}`, 20, yPosition);
+    yPosition += 10;
+    doc.text(`Serie/Reps: ${exercise.serie_reps} | Peso: ${exercise.peso_usato || 'N/A'}`, 30, yPosition);
+    yPosition += 10;
+    if (exercise.note_personali) {
+      doc.text(`Note: ${exercise.note_personali}`, 30, yPosition);
       yPosition += 10;
-    });
-    
-    pdf.save(`Allenamento_Giorno_${currentDay}_${date}.pdf`);
-  } catch (error) {
-    console.error('Errore export PDF:', error);
-    alert('Errore durante l\'export PDF');
-  }
+    }
+    yPosition += 5;
+  });
+  
+  doc.save(`allenamento-${day}-${date}.pdf`);
+  showMessage('PDF esportato con successo!', 'success');
 }
 
-function exportToExcel() {
-  if (!window.XLSX) {
-    alert('Libreria Excel non disponibile');
-    return;
-  }
+function exportToExcel(day) {
+  const exercises = collectWorkoutData(day);
+  const date = document.getElementById(`date${day}`).value;
   
-  try {
-    const dateInput = document.getElementById('workout-date');
-    const date = dateInput ? dateInput.value : '';
-    const dayData = workoutData[currentDay];
-    
-    if (!dayData) {
-      alert('Errore nel caricamento dei dati');
-      return;
-    }
-    
-    const wb = XLSX.utils.book_new();
-    const exercises = dayData.esercizi;
-    const pesoUsatoInputs = document.querySelectorAll('.peso-usato');
-    const serieEffettiveInputs = document.querySelectorAll('.serie-effettive');
-    const notePersonaliInputs = document.querySelectorAll('.note-personali');
-    
-    const data = [
-      ['Data', 'Esercizio', 'Serie/Reps', 'Peso partenza', 'Peso usato', 'Serie effettive', 'Note esercizio', 'Recupero(s)', 'Note personali']
-    ];
-    
-    exercises.forEach((exercise, index) => {
-      const pesoUsato = pesoUsatoInputs[index] ? pesoUsatoInputs[index].value.trim() : '';
-      const serieEffettive = serieEffettiveInputs[index] ? serieEffettiveInputs[index].value.trim() : '';
-      const notePersonali = notePersonaliInputs[index] ? notePersonaliInputs[index].value.trim() : '';
-      
-      data.push([
-        date,
-        exercise.nome,
-        exercise.serie_reps,
-        exercise.peso_partenza,
-        pesoUsato,
-        serieEffettive,
-        exercise.note_esercizio,
-        exercise.recupero,
-        notePersonali
-      ]);
-    });
-    
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    XLSX.utils.book_append_sheet(wb, ws, `Giorno ${currentDay}`);
-    XLSX.writeFile(wb, `Allenamento_Giorno_${currentDay}_${date}.xlsx`);
-  } catch (error) {
-    console.error('Errore export Excel:', error);
-    alert('Errore durante l\'export Excel');
-  }
+  const ws = XLSX.utils.json_to_sheet(exercises);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, `Giorno ${day}`);
+  
+  XLSX.writeFile(wb, `allenamento-${day}-${date}.xlsx`);
+  showMessage('Excel esportato con successo!', 'success');
 }
 
 function exportHistoryToExcel() {
-  if (!window.XLSX) {
-    alert('Libreria Excel non disponibile');
-    return;
-  }
-  
   if (workoutHistory.length === 0) {
-    alert('Nessun allenamento salvato nella cronologia');
+    showMessage('Nessuna cronologia da esportare.', 'error');
     return;
   }
   
-  try {
-    const wb = XLSX.utils.book_new();
+  const flatData = workoutHistory.flatMap(workout => 
+    workout.exercises.map(exercise => ({
+      Data: workout.date,
+      Giorno: workout.day,
+      'Nome Giorno': workout.dayName,
+      Esercizio: exercise.nome,
+      'Serie/Reps': exercise.serie_reps,
+      'Peso Partenza': exercise.peso_partenza,
+      'Peso Usato': exercise.peso_usato || '',
+      'Serie Effettive': exercise.serie_effettive || '',
+      'Note Esercizio': exercise.note_esercizio,
+      Recupero: exercise.recupero,
+      'Note Personali': exercise.note_personali || ''
+    }))
+  );
+  
+  const ws = XLSX.utils.json_to_sheet(flatData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Cronologia Completa');
+  
+  XLSX.writeFile(wb, 'cronologia-allenamenti.xlsx');
+  showMessage('Cronologia esportata in Excel!', 'success');
+}
+
+// Backup functions
+function exportBackup() {
+  const backup = {
+    version: '1.0',
+    exportDate: new Date().toISOString(),
+    workoutHistory: workoutHistory
+  };
+  
+  const dataStr = JSON.stringify(backup, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(dataBlob);
+  link.download = `backup-allenamenti-${new Date().toISOString().split('T')[0]}.json`;
+  link.click();
+  
+  showMessage('Backup esportato con successo!', 'success');
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const backup = JSON.parse(e.target.result);
+      if (backup.workoutHistory && Array.isArray(backup.workoutHistory)) {
+        workoutHistory = backup.workoutHistory;
+        saveWorkoutHistory();
+        updateHistoryDisplay();
+        showMessage('Backup importato con successo!', 'success');
+      } else {
+        showMessage('Formato backup non valido.', 'error');
+      }
+    } catch (error) {
+      showMessage('Errore nell\'importazione del backup.', 'error');
+    }
+  };
+  reader.readAsText(file);
+  
+  // Reset file input
+  event.target.value = '';
+}
+
+// Utility functions
+function collectWorkoutData(day) {
+  const exercises = [];
+  const inputs = document.querySelectorAll(`[data-day="${day}"]`);
+  const exerciseData = {};
+
+  inputs.forEach(input => {
+    const index = input.getAttribute('data-index');
+    const field = input.getAttribute('data-field');
     
-    const data = [
-      ['Data', 'Giorno', 'Esercizio', 'Serie/Reps', 'Peso partenza', 'Peso usato', 'Serie effettive', 'Note esercizio', 'Recupero(s)', 'Note personali']
-    ];
+    if (!exerciseData[index]) {
+      exerciseData[index] = {
+        nome: workoutData[day].esercizi[index].nome,
+        serie_reps: workoutData[day].esercizi[index].serie_reps,
+        peso_partenza: workoutData[day].esercizi[index].peso_partenza,
+        note_esercizio: workoutData[day].esercizi[index].note_esercizio,
+        recupero: workoutData[day].esercizi[index].recupero
+      };
+    }
     
-    workoutHistory.forEach(session => {
-      session.exercises.forEach(exercise => {
-        data.push([
-          session.date,
-          `${session.day} - ${session.dayName}`,
-          exercise.nome,
-          exercise.serie_reps,
-          exercise.peso_partenza,
-          exercise.peso_usato,
-          exercise.serie_effettive,
-          exercise.note_esercizio,
-          exercise.recupero,
-          exercise.note_personali
-        ]);
-      });
-    });
-    
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    XLSX.utils.book_append_sheet(wb, ws, 'Cronologia Completa');
-    
-    const today = new Date().toISOString().split('T')[0];
-    XLSX.writeFile(wb, `Cronologia_Allenamenti_${today}.xlsx`);
-  } catch (error) {
-    console.error('Errore export cronologia Excel:', error);
-    alert('Errore durante l\'export della cronologia');
-  }
+    exerciseData[index][field] = input.value;
+  });
+
+  return Object.values(exerciseData);
+}
+
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('it-IT');
+}
+
+function showMessage(message, type) {
+  // Remove existing messages
+  const existingMessages = document.querySelectorAll('.message');
+  existingMessages.forEach(msg => msg.remove());
+  
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message message--${type}`;
+  messageDiv.textContent = message;
+  
+  const container = document.querySelector('.container');
+  container.insertBefore(messageDiv, container.firstChild);
+  
+  // Auto remove after 5 seconds
+  setTimeout(() => {
+    messageDiv.remove();
+  }, 5000);
 }
