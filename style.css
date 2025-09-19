@@ -738,445 +738,443 @@ select.form-control {
 }
 
 /* END PERPLEXITY DESIGN SYSTEM */
-/* Additional styles for the workout tracking app */
-
-body {
-  padding: var(--space-20);
+.header {
+    background: var(--color-primary);
+    color: var(--color-btn-primary-text);
+    padding: var(--space-20) var(--space-16);
+    text-align: center;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    margin-bottom: var(--space-24);
 }
 
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
+.header h1 {
+    color: var(--color-btn-primary-text);
+    margin: 0;
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
 }
 
-header {
-  text-align: center;
-  margin-bottom: var(--space-32);
+.navigation {
+    display: flex;
+    gap: var(--space-8);
+    margin-bottom: var(--space-24);
+    overflow-x: auto;
+    padding-bottom: var(--space-8);
 }
 
-header h1 {
-  color: var(--color-primary);
-  font-size: var(--font-size-4xl);
+.nav-btn {
+    padding: var(--space-10) var(--space-20);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-radius: var(--radius-base);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-standard);
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
 }
 
-/* Tab Navigation */
-.tab-navigation {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-8);
-  margin-bottom: var(--space-32);
-  flex-wrap: wrap;
+.nav-btn:hover {
+    background: var(--color-secondary);
 }
 
-.tab-btn {
-  padding: var(--space-12) var(--space-24);
-  background: var(--color-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-base);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: all var(--duration-normal) var(--ease-standard);
-  color: var(--color-text);
-  font-size: var(--font-size-base);
+.nav-btn.active {
+    background: var(--color-primary);
+    color: var(--color-btn-primary-text);
+    border-color: var(--color-primary);
 }
 
-.tab-btn:hover {
-  background: var(--color-secondary-hover);
+.workout-section {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-24);
+    border: 1px solid var(--color-card-border);
 }
 
-.tab-btn.active {
-  background: var(--color-primary);
-  color: var(--color-btn-primary-text);
-  border-color: var(--color-primary);
-}
-
-/* Tab Content */
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-/* Day Header */
-.day-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-24);
-  flex-wrap: wrap;
-  gap: var(--space-16);
-}
-
-.day-header h2 {
-  color: var(--color-text);
-  font-size: var(--font-size-2xl);
-  margin: 0;
+.workout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-24);
+    flex-wrap: wrap;
+    gap: var(--space-16);
 }
 
 .date-section {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
 }
 
-.date-section label {
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
+.date-input {
+    min-width: 160px;
 }
 
-.date-section input {
-  min-width: 160px;
+.workout-title {
+    color: var(--color-text);
+    margin: 0;
+    flex: 1;
+    text-align: right;
 }
 
-/* Table Container */
 .table-container {
-  overflow-x: auto;
-  margin-bottom: var(--space-24);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-card-border);
+    overflow-x: auto;
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-base);
+    margin-bottom: var(--space-24);
 }
 
-/* Workout Table */
 .workout-table {
-  width: 100%;
-  min-width: 800px;
-  border-collapse: collapse;
-  background: var(--color-surface);
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.workout-table th,
+.workout-table td {
+    padding: var(--space-12);
+    text-align: left;
+    border-bottom: 1px solid var(--color-card-border-inner);
+    vertical-align: top;
 }
 
 .workout-table th {
-  background: var(--color-bg-1);
-  padding: var(--space-12);
-  text-align: left;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
-  border-bottom: 2px solid var(--color-border);
-  font-size: var(--font-size-sm);
-  white-space: nowrap;
+    background: var(--color-bg-1);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
-.workout-table td {
-  padding: var(--space-8);
-  border-bottom: 1px solid var(--color-card-border-inner);
-  vertical-align: top;
-}
-
-.workout-table tbody tr:hover {
-  background: var(--color-bg-2);
+.workout-table tr:last-child td {
+    border-bottom: none;
 }
 
 .workout-table input,
 .workout-table textarea {
-  width: 100%;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-6);
-  font-size: var(--font-size-sm);
-  background: var(--color-surface);
-  color: var(--color-text);
+    width: 100%;
+    min-width: 100px;
+    border: 1px solid transparent;
+    background: transparent;
+    padding: var(--space-4);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
 }
 
 .workout-table input:focus,
 .workout-table textarea:focus {
-  border-color: var(--color-primary);
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(var(--color-teal-500-rgb), 0.2);
+    border-color: var(--color-primary);
+    background: var(--color-surface);
+    outline: none;
 }
 
 .workout-table textarea {
-  min-height: 50px;
-  resize: vertical;
+    resize: vertical;
+    min-height: 40px;
+    font-family: var(--font-family-base);
 }
 
-/* Exercise name column */
-.workout-table td:first-child {
-  font-weight: var(--font-weight-medium);
-  min-width: 200px;
+.exercise-name {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    min-width: 200px;
 }
 
-/* Input sizing for specific columns */
-.workout-table .peso-input,
-.workout-table .serie-input {
-  min-width: 80px;
-}
-
-.workout-table .recupero-input {
-  min-width: 60px;
-}
-
-.workout-table .note-input {
-  min-width: 150px;
-}
-
-/* Action Buttons */
 .action-buttons {
-  display: flex;
-  gap: var(--space-12);
-  justify-content: center;
-  flex-wrap: wrap;
+    display: flex;
+    gap: var(--space-16);
+    flex-wrap: wrap;
 }
 
-/* Cronologia Styles */
-.cronologia-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-32);
-  flex-wrap: wrap;
-  gap: var(--space-16);
+.history-section {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-24);
+    border: 1px solid var(--color-card-border);
 }
 
-.cronologia-header h2 {
-  color: var(--color-text);
-  font-size: var(--font-size-2xl);
-  margin: 0;
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-24);
+    flex-wrap: wrap;
+    gap: var(--space-16);
 }
 
-.cronologia-actions {
-  display: flex;
-  gap: var(--space-8);
-  flex-wrap: wrap;
+.history-header h2 {
+    color: var(--color-text);
+    margin: 0;
+}
+
+.history-actions {
+    display: flex;
+    gap: var(--space-8);
+    flex-wrap: wrap;
 }
 
 .history-list {
-  display: grid;
-  gap: var(--space-16);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
 }
 
 .history-item {
-  background: var(--color-surface);
-  border: 1px solid var(--color-card-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-20);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--duration-normal) var(--ease-standard);
+    background: var(--color-bg-2);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-base);
+    padding: var(--space-16);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-12);
 }
 
-.history-item:hover {
-  box-shadow: var(--shadow-md);
+.history-item-info {
+    flex: 1;
+    min-width: 200px;
 }
 
-.history-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-16);
-  flex-wrap: wrap;
-  gap: var(--space-12);
+.history-item-info h4 {
+    margin: 0 0 var(--space-4) 0;
+    color: var(--color-text);
 }
 
-.history-item-title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
-  margin: 0;
-}
-
-.history-item-date {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-  background: var(--color-bg-3);
-  padding: var(--space-4) var(--space-8);
-  border-radius: var(--radius-sm);
+.history-item-info p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
 }
 
 .history-item-actions {
-  display: flex;
-  gap: var(--space-8);
+    display: flex;
+    gap: var(--space-8);
+    flex-wrap: wrap;
 }
 
-.history-item-preview {
-  background: var(--color-bg-4);
-  border-radius: var(--radius-base);
-  padding: var(--space-12);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  max-height: 100px;
-  overflow-y: auto;
-}
-
-.no-history {
-  text-align: center;
-  color: var(--color-text-secondary);
-  font-style: italic;
-  padding: var(--space-32);
-  background: var(--color-bg-5);
-  border-radius: var(--radius-lg);
-}
-
-/* Modal Styles */
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: var(--space-20);
+    z-index: 1000;
+    overflow-y: auto;
 }
 
 .modal.hidden {
-  display: none;
+    display: none;
 }
 
 .modal-content {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  padding: var(--space-32);
-  max-width: 400px;
-  width: 90%;
-  box-shadow: var(--shadow-lg);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-card-border);
+    width: 100%;
+    max-width: 1200px;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin-top: var(--space-20);
 }
 
-.modal-content h3 {
-  margin-bottom: var(--space-16);
-  color: var(--color-text);
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-20);
+    border-bottom: 1px solid var(--color-card-border-inner);
 }
 
-.modal-content p {
-  margin-bottom: var(--space-24);
-  color: var(--color-text-secondary);
+.modal-header h3 {
+    margin: 0;
+    color: var(--color-text);
 }
 
-.modal-actions {
-  display: flex;
-  gap: var(--space-12);
-  justify-content: flex-end;
+.modal-header button {
+    min-width: auto;
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--font-size-lg);
+    line-height: 1;
 }
 
-/* Success message */
-.success-message {
-  position: fixed;
-  top: var(--space-20);
-  right: var(--space-20);
-  background: var(--color-success);
-  color: var(--color-btn-primary-text);
-  padding: var(--space-12) var(--space-20);
-  border-radius: var(--radius-base);
-  font-weight: var(--font-weight-medium);
-  z-index: 1001;
-  opacity: 0;
-  transform: translateX(100%);
-  transition: all var(--duration-normal) var(--ease-standard);
+.modal-body {
+    padding: var(--space-20);
 }
 
-.success-message.show {
-  opacity: 1;
-  transform: translateX(0);
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-12);
+    padding: var(--space-20);
+    border-top: 1px solid var(--color-card-border-inner);
 }
 
-/* Responsive Design */
+.empty-history {
+    text-align: center;
+    padding: var(--space-32);
+    color: var(--color-text-secondary);
+}
+
 @media (max-width: 768px) {
-  body {
-    padding: var(--space-16);
-  }
+    .container {
+        padding: var(--space-8);
+    }
 
-  .day-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .header {
+        padding: var(--space-16) var(--space-12);
+        margin-bottom: var(--space-16);
+    }
 
-  .cronologia-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .header h1 {
+        font-size: var(--font-size-2xl);
+    }
 
-  .cronologia-actions {
-    width: 100%;
-    justify-content: stretch;
-  }
+    .navigation {
+        margin-bottom: var(--space-16);
+        gap: var(--space-4);
+    }
 
-  .cronologia-actions .btn {
-    flex: 1;
-    text-align: center;
-  }
+    .nav-btn {
+        padding: var(--space-8) var(--space-16);
+        font-size: var(--font-size-sm);
+    }
 
-  .action-buttons {
-    flex-direction: column;
-  }
+    .workout-section,
+    .history-section {
+        padding: var(--space-16);
+    }
 
-  .action-buttons .btn {
-    width: 100%;
-  }
+    .workout-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-12);
+    }
 
-  .history-item-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .workout-title {
+        text-align: left;
+        font-size: var(--font-size-xl);
+    }
 
-  .history-item-actions {
-    width: 100%;
-    justify-content: stretch;
-  }
+    .workout-table {
+        min-width: 600px;
+        font-size: var(--font-size-sm);
+    }
 
-  .history-item-actions .btn {
-    flex: 1;
-    text-align: center;
-  }
+    .workout-table th,
+    .workout-table td {
+        padding: var(--space-8);
+    }
 
-  .modal-content {
-    margin: var(--space-16);
-  }
+    .action-buttons {
+        flex-direction: column;
+    }
 
-  .modal-actions {
-    flex-direction: column;
-  }
+    .action-buttons .btn {
+        width: 100%;
+    }
 
-  .tab-navigation {
-    justify-content: stretch;
-  }
+    .history-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-  .tab-btn {
-    flex: 1;
-    text-align: center;
-  }
+    .history-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .history-actions .btn {
+        flex: 1;
+        font-size: var(--font-size-sm);
+    }
+
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .history-item-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .history-item-actions .btn {
+        flex: 1;
+    }
+
+    .modal {
+        padding: var(--space-8);
+    }
+
+    .modal-content {
+        margin-top: var(--space-8);
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: var(--space-16);
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+    }
 }
 
 @media (max-width: 480px) {
-  .workout-table {
-    min-width: 600px;
-  }
+    .header h1 {
+        font-size: var(--font-size-xl);
+    }
 
-  .workout-table th,
-  .workout-table td {
-    padding: var(--space-6);
-  }
+    .workout-table {
+        min-width: 500px;
+        font-size: var(--font-size-xs);
+    }
 
-  .workout-table input,
-  .workout-table textarea {
-    padding: var(--space-4);
-    font-size: var(--font-size-xs);
-  }
+    .workout-table th,
+    .workout-table td {
+        padding: var(--space-4);
+    }
 }
 
-/* Print styles for PDF */
-@media print {
-  body {
-    background: white;
-    color: black;
-  }
+.status-message {
+    position: fixed;
+    top: var(--space-20);
+    right: var(--space-20);
+    padding: var(--space-12) var(--space-16);
+    border-radius: var(--radius-base);
+    color: white;
+    font-weight: var(--font-weight-medium);
+    z-index: 1001;
+    animation: slideIn 0.3s ease-out;
+}
 
-  .tab-navigation,
-  .action-buttons,
-  .cronologia-actions {
-    display: none;
-  }
+.status-message.success {
+    background: var(--color-success);
+}
 
-  .table-container {
-    border: none;
-  }
+.status-message.error {
+    background: var(--color-error);
+}
 
-  .workout-table {
-    border: 1px solid black;
-  }
-
-  .workout-table th,
-  .workout-table td {
-    border: 1px solid black;
-  }
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
